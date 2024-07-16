@@ -1,70 +1,86 @@
-#![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
+use std::str;
 
 declare_id!("EGYo4TaUmnsxosJaKxVGSUzXNmw6XSsZxMzpG4bdpDYR");
 
 #[program]
-pub mod counter {
+pub mod hangman_game {
     use super::*;
 
-  pub fn close(_ctx: Context<CloseCounter>) -> Result<()> {
-    Ok(())
-  }
+    pub fn start_game(ctx: Context<StartGame>, word: String, max_wrong_guesses: u8) -> Result<()> {
+        let hangman = &mut ctx.accounts.hangman;
+        hangman.is_initialized = true;
+        hangman.word = word.to_lowercase();
+        hangman.word_length = hangman.word.len() as u8;
+        hangman.max_wrong_guesses = max_wrong_guesses;
+        hangman.wrong_guesses = 0;
+        hangman.guessed_letters = vec![0; hangman.word_length as usize];
+        Ok(())
+    }
 
-  pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.counter.count = ctx.accounts.counter.count.checked_sub(1).unwrap();
-    Ok(())
-  }
+    pub fn make_guess(ctx: Context<MakeGuess>, letter: u8) -> Result<()> {
+        let hangman = &mut ctx.accounts.hangman;
 
-  pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.counter.count = ctx.accounts.counter.count.checked_add(1).unwrap();
-    Ok(())
-  }
+        // Ensure the guess is a lowercase alphabet character
+        if !((b'a'..=b'z').contains(&letter)) {
+            return Err(ProgramError::InvalidArgument.into());
+        }
 
-  pub fn initialize(_ctx: Context<InitializeCounter>) -> Result<()> {
-    Ok(())
-  }
+        let mut correct_guess = false;
+        let word_bytes = hangman.word.as_bytes().to_vec();
 
-  pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.counter.count = value.clone();
-    Ok(())
-  }
+        // First pass: Check if the letter is in the word
+        for &c in word_bytes.iter() {
+            if c == letter {
+                correct_guess = true;
+                break;
+            }
+        }
+
+        // Second pass: Update the guessed letters
+        if correct_guess {
+            for (i, &c) in word_bytes.iter().enumerate() {
+                if c == letter {
+                    hangman.guessed_letters[i] = letter;
+                }
+            }
+        } else {
+            hangman.wrong_guesses += 1;
+        }
+
+        if hangman.wrong_guesses >= hangman.max_wrong_guesses {
+            msg!("Game Over! Too many wrong guesses.");
+        } else if hangman.guessed_letters.iter().all(|&c| c != 0) {
+            msg!("Congratulations! You guessed the word.");
+        }
+
+        Ok(())
+    }
+
 }
 
 #[derive(Accounts)]
-pub struct InitializeCounter<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
-
-  #[account(
-  init,
-  space = 8 + Counter::INIT_SPACE,
-  payer = payer
-  )]
-  pub counter: Account<'info, Counter>,
-  pub system_program: Program<'info, System>,
-}
-#[derive(Accounts)]
-pub struct CloseCounter<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
-
-  #[account(
-  mut,
-  close = payer, // close account and return lamports to payer
-  )]
-  pub counter: Account<'info, Counter>,
+pub struct StartGame<'info> {
+    #[account(init, payer = user, space = 1024)]
+    pub hangman: Account<'info, Hangman>,
+    #[account(mut)]
+    pub user: Signer<'info>,
+    pub system_program: Program<'info, System>,
 }
 
 #[derive(Accounts)]
-pub struct Update<'info> {
-  #[account(mut)]
-  pub counter: Account<'info, Counter>,
+pub struct MakeGuess<'info> {
+    #[account(mut)]
+    pub hangman: Account<'info, Hangman>,
 }
+
 
 #[account]
-#[derive(InitSpace)]
-pub struct Counter {
-  count: u8,
+pub struct Hangman {
+    pub is_initialized: bool,
+    pub word: String,
+    pub word_length: u8,
+    pub max_wrong_guesses: u8,
+    pub wrong_guesses: u8,
+    pub guessed_letters: Vec<u8>,
 }
