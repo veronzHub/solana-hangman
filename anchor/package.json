@@ -3,9 +3,17 @@
   "version": "0.0.1",
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
-    "@solana/web3.js": "1.91.9"
+    "@project-serum/anchor": "^0.26.0",
+    "@solana/web3.js": "1.91.9",
+    "chai": "^5.1.1",
+    "jest": "^29.7.0",
+    "mocha": "^10.6.0"
   },
   "main": "./index.cjs",
   "module": "./index.js",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/mocha": "^10.0.7"
+  }
 }
