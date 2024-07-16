@@ -1,0 +1,124 @@
+{
+  "address": "EGYo4TaUmnsxosJaKxVGSUzXNmw6XSsZxMzpG4bdpDYR",
+  "metadata": {
+    "name": "hangman_game",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "make_guess",
+      "discriminator": [
+        59,
+        189,
+        219,
+        87,
+        240,
+        211,
+        125,
+        101
+      ],
+      "accounts": [
+        {
+          "name": "hangman",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "letter",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "start_game",
+      "discriminator": [
+        249,
+        47,
+        252,
+        172,
+        184,
+        162,
+        245,
+        14
+      ],
+      "accounts": [
+        {
+          "name": "hangman",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "word",
+          "type": "string"
+        },
+        {
+          "name": "max_wrong_guesses",
+          "type": "u8"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Hangman",
+      "discriminator": [
+        116,
+        122,
+        37,
+        159,
+        15,
+        0,
+        22,
+        169
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "Hangman",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "is_initialized",
+            "type": "bool"
+          },
+          {
+            "name": "word",
+            "type": "string"
+          },
+          {
+            "name": "word_length",
+            "type": "u8"
+          },
+          {
+            "name": "max_wrong_guesses",
+            "type": "u8"
+          },
+          {
+            "name": "wrong_guesses",
+            "type": "u8"
+          },
+          {
+            "name": "guessed_letters",
+            "type": "bytes"
+          }
+        ]
+      }
+    }
+  ]
+}
