@@ -1,18 +1,16 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-const assert = require("chai").assert;
-// import { SolanaHangman } from "../target/types/solana_hangman";
+import * as anchor from '@coral-xyz/anchor';
+import assert from 'assert';
 
-describe("hangman_game", () => {
+describe('hangman_game', () => {
   // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
   const program = anchor.workspace.HangmanGame;
 
-  it("Starts a game", async () => {
+  it('Starts a game', async () => {
     const hangman = anchor.web3.Keypair.generate();
-    const word = "hello";
+    const word = 'hello';
     const maxWrongGuesses = 5;
 
     await program.rpc.startGame(word, new anchor.BN(maxWrongGuesses), {
@@ -28,17 +26,17 @@ describe("hangman_game", () => {
       hangman.publicKey
     );
 
-    assert.isTrue(hangmanAccount.isInitialized);
+    assert.equal(hangmanAccount.isInitialized, true);
     assert.equal(hangmanAccount.word, word);
     assert.equal(hangmanAccount.wordLength, word.length);
     assert.equal(hangmanAccount.maxWrongGuesses, maxWrongGuesses);
     assert.equal(hangmanAccount.wrongGuesses, 0);
-    assert.lengthOf(hangmanAccount.guessedLetters, word.length);
+    assert.equal(hangmanAccount.guessedLetters, word.length);
   });
 
-  it("Makes a correct guess", async () => {
+  it('Makes a correct guess', async () => {
     const hangman = anchor.web3.Keypair.generate();
-    const word = "hello";
+    const word = 'hello';
     const maxWrongGuesses = 5;
 
     await program.rpc.startGame(word, new anchor.BN(maxWrongGuesses), {
@@ -50,7 +48,7 @@ describe("hangman_game", () => {
       signers: [hangman],
     });
 
-    await program.rpc.makeGuess("h".charCodeAt(0), {
+    await program.rpc.makeGuess('h'.charCodeAt(0), {
       accounts: {
         hangman: hangman.publicKey,
       },
@@ -60,13 +58,13 @@ describe("hangman_game", () => {
       hangman.publicKey
     );
 
-    assert.equal(hangmanAccount.guessedLetters[0], "h".charCodeAt(0));
+    assert.equal(hangmanAccount.guessedLetters[0], 'h'.charCodeAt(0));
     assert.equal(hangmanAccount.wrongGuesses, 0);
   });
 
-  it("Makes an incorrect guess", async () => {
+  it('Makes an incorrect guess', async () => {
     const hangman = anchor.web3.Keypair.generate();
-    const word = "hello";
+    const word = 'hello';
     const maxWrongGuesses = 5;
 
     await program.rpc.startGame(word, new anchor.BN(maxWrongGuesses), {
@@ -78,7 +76,7 @@ describe("hangman_game", () => {
       signers: [hangman],
     });
 
-    await program.rpc.makeGuess("z".charCodeAt(0), {
+    await program.rpc.makeGuess('z'.charCodeAt(0), {
       accounts: {
         hangman: hangman.publicKey,
       },
