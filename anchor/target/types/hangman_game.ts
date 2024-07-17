@@ -131,7 +131,15 @@ export type HangmanGame = {
             "type": "bytes"
           },
           {
+            "name": "wrongGuessedLetters",
+            "type": "bytes"
+          },
+          {
             "name": "isGameOver",
+            "type": "bool"
+          },
+          {
+            "name": "isGameWon",
             "type": "bool"
           }
         ]
