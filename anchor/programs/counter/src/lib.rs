@@ -15,11 +15,16 @@ pub mod hangman_game {
         hangman.max_wrong_guesses = max_wrong_guesses;
         hangman.wrong_guesses = 0;
         hangman.guessed_letters = vec![0; hangman.word_length as usize];
+        hangman.is_game_over = false;
         Ok(())
     }
 
     pub fn make_guess(ctx: Context<MakeGuess>, letter: u8) -> Result<()> {
         let hangman = &mut ctx.accounts.hangman;
+
+        if hangman.is_game_over {
+          return Err(ErrorCode::GameOver.into());
+        }
 
         // Ensure the guess is a lowercase alphabet character
         if !((b'a'..=b'z').contains(&letter)) {
@@ -49,8 +54,11 @@ pub mod hangman_game {
         }
 
         if hangman.wrong_guesses >= hangman.max_wrong_guesses {
-            msg!("Game Over! Too many wrong guesses.");
-        } else if hangman.guessed_letters.iter().all(|&c| c != 0) {
+          hangman.is_game_over = true;
+          msg!("Game Over! Too many wrong guesses.");
+        }
+
+        if hangman.guessed_letters.iter().all(|&c| c != 0) {
             msg!("Congratulations! You guessed the word.");
         }
 
@@ -83,4 +91,11 @@ pub struct Hangman {
     pub max_wrong_guesses: u8,
     pub wrong_guesses: u8,
     pub guessed_letters: Vec<u8>,
+    pub is_game_over: bool,
+}
+
+#[error_code]
+pub enum ErrorCode {
+    #[msg("The game is over.")]
+    GameOver,
 }

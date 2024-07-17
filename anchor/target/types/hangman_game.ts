@@ -93,6 +93,13 @@ export type HangmanGame = {
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "gameOver",
+      "msg": "The game is over."
+    }
+  ],
   "types": [
     {
       "name": "hangman",
@@ -122,6 +129,10 @@ export type HangmanGame = {
           {
             "name": "guessedLetters",
             "type": "bytes"
+          },
+          {
+            "name": "isGameOver",
+            "type": "bool"
           }
         ]
       }
