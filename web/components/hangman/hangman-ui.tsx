@@ -87,8 +87,7 @@ export function HangmanList() {
         </div>
       ) : (
         <div className="text-center">
-          <h2 className={'text-2xl'}>No accounts</h2>
-          No accounts found. Create one above to get started.
+          <h2 className={'text-2xl'}>No Games Found</h2>
         </div>
       )}
     </div>
@@ -96,16 +95,33 @@ export function HangmanList() {
 }
 
 function HangmanCard({ account }: { account: PublicKey }) {
-  const { accountQuery } = useHangmanProgramAccount({ account });
+  const { accountQuery, make_guess } = useHangmanProgramAccount({ account });
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
-  const word = useMemo(
-    () => accountQuery.data?.word ?? 0,
-    [accountQuery.data?.word]
+  const gameData = useMemo(
+    () => ({
+      word: accountQuery.data?.word ?? '',
+      maxWrongGuesses: accountQuery.data?.maxWrongGuesses ?? 0,
+      wrongGuesses: accountQuery.data?.wrongGuesses ?? 0,
+      guessedLetters: accountQuery.data?.guessedLetters ?? [],
+    }),
+    [
+      accountQuery.data?.word,
+      accountQuery.data?.maxWrongGuesses,
+      accountQuery.data?.wrongGuesses,
+      accountQuery.data?.guessedLetters,
+    ]
   );
-  const maxWrongGuesses = useMemo(
-    () => accountQuery.data?.maxWrongGuesses ?? 0,
-    [accountQuery.data?.maxWrongGuesses]
-  );
+
+  const handleLetterClick = (letter: string) => {
+    console.log(`letter: ${letter}`);
+    const letterCode = letter.charCodeAt(0);
+    console.log('letterCode:', letterCode);
+    make_guess.mutateAsync({
+      account,
+      letter: letterCode,
+    });
+  };
 
   return accountQuery.isLoading ? (
     <span className="loading loading-spinner loading-lg"></span>
@@ -113,21 +129,35 @@ function HangmanCard({ account }: { account: PublicKey }) {
     <div className="card card-bordered border-base-300 border-4 text-neutral-content">
       <div className="card-body items-center text-center">
         <div className="space-y-6">
-          <h2
-            className="card-title justify-center text-3xl cursor-pointer"
-            onClick={() => accountQuery.refetch()}
-          >
-            Word
+          <p className="justify-center cursor-pointer">
+            Max wrong guesses: {gameData.maxWrongGuesses}
+          </p>
+          <p className="justify-center cursor-pointer">
+            Total wrong guesses: {gameData.wrongGuesses}
+          </p>
+          <h2 className="card-title justify-center cursor-pointer text-2xl">
+            {gameData.word
+              .split('')
+              .map((letter, index) =>
+                gameData.guessedLetters[index] !== 0 ? letter : '_'
+              )
+              .join(' ')}
           </h2>
-          <p>{word}</p>
 
-          <h2
-            className="card-title justify-center text-3xl cursor-pointer"
-            onClick={() => accountQuery.refetch()}
-          >
-            Max wrong guesses
-          </h2>
-          <p>{maxWrongGuesses}</p>
+          {/* <p>{gameData.guessedLetters}</p> */}
+
+          <div>
+            {alphabet.map((letter) => (
+              <button
+                className="m-1 bg-slate-300 pr-2 pl-2 pt- rounded-lg text-black"
+                key={letter}
+                onClick={() => handleLetterClick(letter)}
+              >
+                {letter}
+              </button>
+            ))}
+          </div>
+
           <div className="text-center space-y-4">
             <p>
               <ExplorerLink

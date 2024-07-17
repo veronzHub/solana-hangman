@@ -12,7 +12,8 @@ export const metadata = {
 const links: { label: string; path: string }[] = [
   { label: 'Account', path: '/account' },
   { label: 'Clusters', path: '/clusters' },
-  { label: 'Hangman', path: '/hangman' },
+  { label: 'Create New Game', path: '/hangman/create' },
+  { label: 'Play Hangman', path: '/hangman/play' },
 ];
 
 export default function RootLayout({
