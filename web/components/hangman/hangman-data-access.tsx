@@ -29,7 +29,6 @@ export function useHangmanProgram() {
     queryKey: ['hangman', 'all', { cluster }],
     queryFn: () => program.account.hangman.all(),
   });
-  
 
   const getProgramAccount = useQuery({
     queryKey: ['get-program-account', { cluster }],
@@ -38,7 +37,15 @@ export function useHangmanProgram() {
 
   const start_game = useMutation({
     mutationKey: ['hangman', 'start_game', { cluster }],
-    mutationFn: ({keypair, word, max_wrong_guesses}: {keypair: Keypair, word: string, max_wrong_guesses: number}) =>
+    mutationFn: ({
+      keypair,
+      word,
+      max_wrong_guesses,
+    }: {
+      keypair: Keypair;
+      word: string;
+      max_wrong_guesses: number;
+    }) =>
       program.methods
         .startGame(word, max_wrong_guesses)
         .accounts({ hangman: keypair.publicKey })
@@ -66,55 +73,23 @@ export function useHangmanProgramAccount({ account }: { account: PublicKey }) {
   const { program, accounts } = useHangmanProgram();
 
   const accountQuery = useQuery({
-    queryKey: ['counter', 'fetch', { cluster, account }],
+    queryKey: ['hangman', 'fetch', { cluster, account }],
     queryFn: () => program.account.hangman.fetch(account),
   });
 
-  // const closeMutation = useMutation({
-  //   mutationKey: ['counter', 'close', { cluster, account }],
-  //   mutationFn: () =>
-  //     program.methods.close().accounts({ counter: account }).rpc(),
-  //   onSuccess: (tx) => {
-  //     transactionToast(tx);
-  //     return accounts.refetch();
-  //   },
-  // });
-
-  // const decrementMutation = useMutation({
-  //   mutationKey: ['counter', 'decrement', { cluster, account }],
-  //   mutationFn: () =>
-  //     program.methods.decrement().accounts({ counter: account }).rpc(),
-  //   onSuccess: (tx) => {
-  //     transactionToast(tx);
-  //     return accountQuery.refetch();
-  //   },
-  // });
-
-  // const incrementMutation = useMutation({
-  //   mutationKey: ['counter', 'increment', { cluster, account }],
-  //   mutationFn: () =>
-  //     program.methods.increment().accounts({ counter: account }).rpc(),
-  //   onSuccess: (tx) => {
-  //     transactionToast(tx);
-  //     return accountQuery.refetch();
-  //   },
-  // });
-
-  // const setMutation = useMutation({
-  //   mutationKey: ['counter', 'set', { cluster, account }],
-  //   mutationFn: (value: number) =>
-  //     program.methods.set(value).accounts({ counter: account }).rpc(),
-  //   onSuccess: (tx) => {
-  //     transactionToast(tx);
-  //     return accountQuery.refetch();
-  //   },
-  // });
+  const make_guess = useMutation({
+    mutationKey: ['hangman', 'make_game', { cluster }],
+    mutationFn: ({ account, letter }: { account: PublicKey; letter: number }) =>
+      program.methods.makeGuess(letter).accounts({ hangman: account }).rpc(),
+    onSuccess: (signature) => {
+      transactionToast(signature);
+      return accountQuery.refetch();
+    },
+    onError: () => toast.error('Failed to work'),
+  });
 
   return {
     accountQuery,
-    // closeMutation,
-    // decrementMutation,
-    // incrementMutation,
-    // setMutation,
+    make_guess,
   };
 }

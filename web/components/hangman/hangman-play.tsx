@@ -5,29 +5,17 @@ import { WalletButton } from '../solana/solana-provider';
 import { AppHero, ellipsify } from '../ui/ui-layout';
 import { ExplorerLink } from '../cluster/cluster-ui';
 import { useHangmanProgram } from './hangman-data-access';
-import { HangmanCreate, HangmanList } from './hangman-ui';
+import { HangmanList } from './hangman-ui';
 
-export default function HangmanFeature() {
+export default function HangmanPlayPage() {
   const { publicKey } = useWallet();
   const { programId } = useHangmanProgram();
 
   return publicKey ? (
     <div>
-      <AppHero
-        title="Hangman"
-        subtitle={
-          'Create a new game by choosing a word and clicking the "Create Game" button.'
-        }
-      >
-        <p className="mb-6">
-          <ExplorerLink
-            path={`account/${programId}`}
-            label={ellipsify(programId.toString())}
-          />
-        </p>
-        <HangmanCreate />
+      <AppHero title="Play Hangman" subtitle={'Start playing a game below'}>
+        <HangmanList />
       </AppHero>
-      <HangmanList />
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">
