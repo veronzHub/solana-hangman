@@ -33,7 +33,7 @@ describe('hangman_game', () => {
     assert.equal(hangmanAccount.wrongGuesses, 0);
     assert.equal(hangmanAccount.guessedLetters, word.length);
     assert.equal(hangmanAccount.isGameOver, false);
-
+    assert.equal(hangmanAccount.isGameWon, false);
   });
 
   it('Makes a correct guess', async () => {
@@ -124,7 +124,6 @@ describe('hangman_game', () => {
     assert.equal(hangmanAccount.wrongGuesses, 2);
     assert.equal(hangmanAccount.isGameOver, true);
 
-
     try {
       await program.rpc.makeGuess('y'.charCodeAt(0), {
         accounts: {
@@ -135,5 +134,40 @@ describe('hangman_game', () => {
     } catch (err) {
       assert.equal(err.error.errorCode.code, 'GameOver');
     }
+  });
+
+  it('Game won when guessing all letters correctly', async () => {
+    const hangman = anchor.web3.Keypair.generate();
+    const word = 'hi';
+    const maxWrongGuesses = 5;
+
+    await program.rpc.startGame(word, new anchor.BN(maxWrongGuesses), {
+      accounts: {
+        hangman: hangman.publicKey,
+        user: provider.wallet.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      },
+      signers: [hangman],
+    });
+
+    await program.rpc.makeGuess('h'.charCodeAt(0), {
+      accounts: {
+        hangman: hangman.publicKey,
+      },
+    });
+
+    await program.rpc.makeGuess('i'.charCodeAt(0), {
+      accounts: {
+        hangman: hangman.publicKey,
+      },
+    });
+
+    const hangmanAccount = await program.account.hangman.fetch(
+      hangman.publicKey
+    );
+
+    assert.equal(hangmanAccount.wrongGuesses, 0);
+    assert.equal(hangmanAccount.isGameOver, true);
+    assert.equal(hangmanAccount.isGameWon, true);
   });
 });
