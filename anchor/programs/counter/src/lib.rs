@@ -16,6 +16,7 @@ pub mod hangman_game {
         hangman.wrong_guesses = 0;
         hangman.guessed_letters = vec![0; hangman.word_length as usize];
         hangman.is_game_over = false;
+        hangman.is_game_won = false;
         Ok(())
     }
 
@@ -59,6 +60,8 @@ pub mod hangman_game {
         }
 
         if hangman.guessed_letters.iter().all(|&c| c != 0) {
+          hangman.is_game_over = true;
+          hangman.is_game_won = true;
             msg!("Congratulations! You guessed the word.");
         }
 
@@ -92,6 +95,7 @@ pub struct Hangman {
     pub wrong_guesses: u8,
     pub guessed_letters: Vec<u8>,
     pub is_game_over: bool,
+    pub is_game_won: bool,
 }
 
 #[error_code]
