@@ -8,16 +8,16 @@ pub mod hangman_game {
     use super::*;
 
     pub fn start_game(ctx: Context<StartGame>, word: String, max_wrong_guesses: u8) -> Result<()> {
-        let hangman = &mut ctx.accounts.hangman;
-        hangman.is_initialized = true;
-        hangman.word = word.to_lowercase();
-        hangman.word_length = hangman.word.len() as u8;
-        hangman.max_wrong_guesses = max_wrong_guesses;
-        hangman.wrong_guesses = 0;
-        hangman.guessed_letters = vec![0; hangman.word_length as usize];
-        hangman.is_game_over = false;
-        hangman.is_game_won = false;
-        Ok(())
+      let hangman = &mut ctx.accounts.hangman;
+      hangman.is_initialized = true;
+      hangman.word = word.to_lowercase();
+      hangman.word_length = hangman.word.len() as u8;
+      hangman.max_wrong_guesses = max_wrong_guesses;
+      hangman.guessed_letters = vec![0; hangman.word_length as usize];
+      hangman.wrong_guessed_letters = vec![];
+      hangman.is_game_over = false;
+      hangman.is_game_won = false;
+      Ok(())
     }
 
     pub fn make_guess(ctx: Context<MakeGuess>, letter: u8) -> Result<()> {
@@ -33,6 +33,7 @@ pub mod hangman_game {
         }
 
         let mut correct_guess = false;
+
         let word_bytes = hangman.word.as_bytes().to_vec();
 
         // First pass: Check if the letter is in the word
@@ -45,12 +46,13 @@ pub mod hangman_game {
 
         // Second pass: Update the guessed letters
         if correct_guess {
-            for (i, &c) in word_bytes.iter().enumerate() {
-                if c == letter {
-                    hangman.guessed_letters[i] = letter;
-                }
-            }
+          for (i, &c) in word_bytes.iter().enumerate() {
+              if c == letter {
+                  hangman.guessed_letters[i] = letter;
+              }
+          }
         } else {
+            hangman.wrong_guessed_letters.push(letter);
             hangman.wrong_guesses += 1;
         }
 
@@ -94,6 +96,7 @@ pub struct Hangman {
     pub max_wrong_guesses: u8,
     pub wrong_guesses: u8,
     pub guessed_letters: Vec<u8>,
+    pub wrong_guessed_letters: Vec<u8>,
     pub is_game_over: bool,
     pub is_game_won: bool,
 }
