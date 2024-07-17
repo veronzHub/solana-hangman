@@ -87,6 +87,13 @@
       ]
     }
   ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "GameOver",
+      "msg": "The game is over."
+    }
+  ],
   "types": [
     {
       "name": "Hangman",
@@ -116,6 +123,10 @@
           {
             "name": "guessed_letters",
             "type": "bytes"
+          },
+          {
+            "name": "is_game_over",
+            "type": "bool"
           }
         ]
       }
