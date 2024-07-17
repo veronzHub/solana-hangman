@@ -125,7 +125,15 @@
             "type": "bytes"
           },
           {
+            "name": "wrong_guessed_letters",
+            "type": "bytes"
+          },
+          {
             "name": "is_game_over",
+            "type": "bool"
+          },
+          {
+            "name": "is_game_won",
             "type": "bool"
           }
         ]

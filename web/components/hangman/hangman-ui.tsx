@@ -59,6 +59,13 @@ export function HangmanCreate() {
 export function HangmanList() {
   const { accounts, getProgramAccount } = useHangmanProgram();
 
+  const sortedGamesByOpen = accounts.data?.slice().sort((a, b) => {
+    if (a.account.isGameOver === b.account.isGameOver) {
+      return 0;
+    }
+    return a.account.isGameOver ? 1 : -1;
+  });
+
   if (getProgramAccount.isLoading) {
     return <span className="loading loading-spinner loading-lg"></span>;
   }
@@ -78,7 +85,7 @@ export function HangmanList() {
         <span className="loading loading-spinner loading-lg"></span>
       ) : accounts.data?.length ? (
         <div className="grid md:grid-cols-2 gap-4">
-          {accounts.data?.map((account) => (
+          {sortedGamesByOpen?.map((account) => (
             <HangmanCard
               key={account.publicKey.toString()}
               account={account.publicKey}
@@ -104,19 +111,24 @@ function HangmanCard({ account }: { account: PublicKey }) {
       maxWrongGuesses: accountQuery.data?.maxWrongGuesses ?? 0,
       wrongGuesses: accountQuery.data?.wrongGuesses ?? 0,
       guessedLetters: accountQuery.data?.guessedLetters ?? [],
+      wrong_guessed_letters: accountQuery.data?.wrongGuessedLetters ?? [],
+      is_game_over: accountQuery.data?.isGameOver ?? false,
+      is_game_won: accountQuery.data?.isGameWon ?? false,
     }),
     [
       accountQuery.data?.word,
       accountQuery.data?.maxWrongGuesses,
       accountQuery.data?.wrongGuesses,
       accountQuery.data?.guessedLetters,
+      accountQuery.data?.wrongGuessedLetters,
+      accountQuery.data?.isGameOver,
+      accountQuery.data?.isGameWon,
     ]
   );
 
   const handleLetterClick = (letter: string) => {
-    console.log(`letter: ${letter}`);
     const letterCode = letter.charCodeAt(0);
-    console.log('letterCode:', letterCode);
+
     make_guess.mutateAsync({
       account,
       letter: letterCode,
@@ -129,33 +141,55 @@ function HangmanCard({ account }: { account: PublicKey }) {
     <div className="card card-bordered border-base-300 border-4 text-neutral-content">
       <div className="card-body items-center text-center">
         <div className="space-y-6">
-          <p className="justify-center cursor-pointer">
-            Max wrong guesses: {gameData.maxWrongGuesses}
-          </p>
-          <p className="justify-center cursor-pointer">
-            Total wrong guesses: {gameData.wrongGuesses}
-          </p>
-          <h2 className="card-title justify-center cursor-pointer text-2xl">
+          <h2 className="card-title justify-center cursor-pointer text-4xl">
             {gameData.word
               .split('')
-              .map((letter, index) =>
-                gameData.guessedLetters[index] !== 0 ? letter : '_'
+              .map((letter) =>
+                gameData.guessedLetters.includes(letter.charCodeAt(0))
+                  ? letter
+                  : '_'
               )
               .join(' ')}
           </h2>
 
-          {/* <p>{gameData.guessedLetters}</p> */}
-
-          <div>
-            {alphabet.map((letter) => (
-              <button
-                className="m-1 bg-slate-300 pr-2 pl-2 pt- rounded-lg text-black"
-                key={letter}
-                onClick={() => handleLetterClick(letter)}
-              >
-                {letter}
-              </button>
-            ))}
+          <div className="justify-center cursor-pointer">
+            {gameData.is_game_over ? (
+              <div>
+                <p>GAME OVER</p>
+                <p>
+                  {gameData.is_game_won
+                    ? 'You won!'
+                    : `You lost! The word was "${gameData.word}"`}
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="justify-center cursor-pointer mb-5">
+                  Wrong Guesses Left:{' '}
+                  {gameData.maxWrongGuesses - gameData.wrongGuesses}
+                </p>
+                <div>
+                  {alphabet.map((letter) => {
+                    const letterCode = letter.charCodeAt(0);
+                    const isDisabled =
+                      gameData.guessedLetters.includes(letterCode) ||
+                      gameData.wrong_guessed_letters.includes(letterCode);
+                    return (
+                      <button
+                        className={`m-1 pr-2 pl-2 pt- rounded-lg text-black ${
+                          isDisabled ? 'bg-slate-700' : 'bg-slate-300'
+                        }`}
+                        key={letter}
+                        onClick={() => handleLetterClick(letter)}
+                        disabled={isDisabled}
+                      >
+                        {letter}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="text-center space-y-4">
