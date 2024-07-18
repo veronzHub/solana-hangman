@@ -32,7 +32,7 @@ export function HangmanCreate() {
             <label className="font-bold text-lg">Your word</label>
             <input
               type="text"
-              className="form-control input input-bordered w-full"
+              className="form-control input input-bordered w-full mb-5"
               value={word}
               onChange={(e) => setWord(e.target.value)}
             />
@@ -44,7 +44,7 @@ export function HangmanCreate() {
               onChange={(e) => setMaxWrongGuesses(e.target.value)}
             />
             <button
-              className="btn btn-xs lg:btn-md btn-primary create-game"
+              className="btn btn-xs lg:btn-md btn-primary mt-5"
               disabled={start_game.isPending}
             >
               Create Game{start_game.isPending && '...'}
