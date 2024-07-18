@@ -44,7 +44,7 @@ export function HangmanCreate() {
               onChange={(e) => setMaxWrongGuesses(e.target.value)}
             />
             <button
-              className="btn btn-xs lg:btn-md btn-primary"
+              className="btn btn-xs lg:btn-md btn-primary create-game"
               disabled={start_game.isPending}
             >
               Create Game{start_game.isPending && '...'}

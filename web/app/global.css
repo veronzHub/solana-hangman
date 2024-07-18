@@ -17,3 +17,11 @@ body {
 .wallet-adapter-button {
   font-family: inherit !important;
 }
+
+.menu.menu-horizontal {
+  color: black;
+}
+
+.create-game {
+  margin-top: 10px;
+}
