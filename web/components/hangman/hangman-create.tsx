@@ -12,7 +12,7 @@ export default function HangmanCreatePage() {
   const { programId } = useHangmanProgram();
 
   return publicKey ? (
-    <div>
+    <>
       <AppHero
         title="Create New Hangman Game"
         subtitle={
@@ -27,7 +27,7 @@ export default function HangmanCreatePage() {
         </p>
         <HangmanCreate />
       </AppHero>
-    </div>
+    </>
   ) : (
     <div className="max-w-4xl mx-auto">
       <div className="hero py-[64px]">
