@@ -25,7 +25,7 @@ export function HangmanCreate() {
   };
 
   return (
-    <div className="card card-bordered border-base-300 border-4 text-neutral-content">
+    <div className="card card-bordered border-[#333333] border-4 text-neutral-content">
       <div className="card-body items-center text-center">
         <div className="space-y-6">
           <form onSubmit={handleSubmit}>
@@ -44,7 +44,7 @@ export function HangmanCreate() {
               onChange={(e) => setMaxWrongGuesses(e.target.value)}
             />
             <button
-              className="btn btn-xs lg:btn-md btn-primary mt-5"
+              className="btn btn-lg btn-primary mt-5"
               disabled={start_game.isPending}
             >
               Create Game{start_game.isPending && '...'}
