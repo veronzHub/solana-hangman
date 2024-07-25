@@ -9,52 +9,6 @@ import {
   useHangmanProgramAccount,
 } from './hangman-data-access';
 
-export function HangmanCreate() {
-  const [word, setWord] = useState('');
-  const [maxWrongGuesses, setMaxWrongGuesses] = useState(8);
-  const { start_game } = useHangmanProgram();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const keypair = Keypair.generate();
-    start_game.mutateAsync({
-      keypair,
-      word,
-      max_wrong_guesses: maxWrongGuesses,
-    });
-  };
-
-  return (
-    <div className="card card-bordered border-[#333333] border-4 text-neutral-content">
-      <div className="card-body items-center text-center">
-        <div className="space-y-6">
-          <form onSubmit={handleSubmit}>
-            <label className="font-bold text-lg">Your word</label>
-            <input
-              type="text"
-              className="form-control input input-bordered w-full mb-5"
-              value={word}
-              onChange={(e) => setWord(e.target.value)}
-            />
-            <label className="font-bold text-lg">Max Wrong Guesses</label>
-            <input
-              type="number"
-              className="form-control input input-bordered w-full"
-              value={maxWrongGuesses}
-              onChange={(e) => setMaxWrongGuesses(e.target.value)}
-            />
-            <button
-              className="btn btn-lg btn-primary mt-5"
-              disabled={start_game.isPending}
-            >
-              Create Game{start_game.isPending && '...'}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function HangmanList() {
   const { accounts, getProgramAccount } = useHangmanProgram();
