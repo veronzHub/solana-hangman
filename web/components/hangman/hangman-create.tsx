@@ -9,7 +9,7 @@ import { Keypair } from '@solana/web3.js';
 import { useState } from 'react';
 import { cn } from '@/app/lib/utils';
 import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+import { WalletPrompt } from './hangman-ui';
 
 export default function HangmanCreatePage() {
   const { publicKey } = useWallet();
@@ -33,13 +33,7 @@ export default function HangmanCreatePage() {
       </AppHero>
     </>
   ) : (
-    <div className="max-w-4xl mx-auto">
-      <div className="hero py-[64px]">
-        <div className="hero-content text-center">
-          <WalletButton />
-        </div>
-      </div>
-    </div>
+    <WalletPrompt />
   );
 }
 
@@ -113,7 +107,7 @@ function HangmanCreate() {
   };
 
   return (
-    <div className="card card-bordered border-[#333333] border-4 text-neutral-content">
+    <div className="card card-bordered  border-4 text-neutral-content">
       <div className="card-body items-center text-center w-full">
         <div className="w-full md:w-2/3">
           <form onSubmit={handleSubmit}>
