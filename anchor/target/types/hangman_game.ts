@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/hangman_game.json`.
  */
 export type HangmanGame = {
-  "address": "EGYo4TaUmnsxosJaKxVGSUzXNmw6XSsZxMzpG4bdpDYR",
+  "address": "4u6yGzkFDTA62nicP8EGe8B8hn1SGuAwQ3o32iEcE9D6",
   "metadata": {
     "name": "hangmanGame",
     "version": "0.1.0",

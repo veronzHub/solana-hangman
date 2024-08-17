@@ -19,10 +19,16 @@ export function useHangmanProgram() {
   const { cluster } = useCluster();
   const transactionToast = useTransactionToast();
   const provider = useAnchorProvider();
-  const programId = useMemo(
-    () => getHangmanProgramId(cluster.network as Cluster),
-    [cluster]
-  );
+
+  console.log('useHangmanProgram - cluster:', cluster); // Log cluster object
+
+  const programId = useMemo(() => {
+    console.log('useMemo - cluster.network:', cluster.network); // Log cluster.network inside useMemo
+    return getHangmanProgramId(cluster.network as Cluster);
+  }, [cluster]);
+
+  console.log('useMemo - programId:', programId.toString()); // Log programId after it is computed
+
   const program = getHangmanProgram(provider);
 
   const accounts = useQuery({

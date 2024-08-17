@@ -5,13 +5,16 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-counter = "EGYo4TaUmnsxosJaKxVGSUzXNmw6XSsZxMzpG4bdpDYR"
+hangman = "EGYo4TaUmnsxosJaKxVGSUzXNmw6XSsZxMzpG4bdpDYR"
+
+[programs.devnet]
+hangman = "4u6yGzkFDTA62nicP8EGe8B8hn1SGuAwQ3o32iEcE9D6"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
