@@ -3,10 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "anchor": "nx run anchor:anchor",
-    "anchor-build": "nx run anchor:anchor build",
-    "anchor-localnet": "nx run anchor:anchor localnet",
-    "anchor-test": "nx run anchor:anchor test",
     "feature": "nx generate @solana-developers/preset-react:feature",
     "build": "nx build web",
     "dev": "nx serve web"
