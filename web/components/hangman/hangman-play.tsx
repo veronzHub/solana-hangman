@@ -12,6 +12,18 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { LoadingSpinner, WalletPrompt } from './hangman-ui';
 
+interface Hangman {
+  isInitialized: boolean;
+  word: string;
+  wordLength: number;
+  maxWrongGuesses: number;
+  wrongGuesses: number;
+  guessedLetters: Uint8Array;
+  wrongGuessedLetters: Uint8Array;
+  isGameOver: boolean;
+  isGameWon: boolean;
+}
+
 export default function HangmanPlayPage() {
   const { publicKey } = useWallet();
 
@@ -26,8 +38,8 @@ export default function HangmanPlayPage() {
 
 export function HangmanList() {
   const { accounts, getProgramAccount } = useHangmanProgram();
-  const activeGames = accounts.data?.filter(
-    (account) => !account.account.isGameOver
+  const activeGames = accounts?.data?.filter(
+    (account: { account: Hangman }) => !account.account.isGameOver
   );
 
   if (getProgramAccount.isLoading) {
@@ -40,7 +52,7 @@ export function HangmanList() {
     <div className="space-y-6">
       {activeGames?.length ? (
         <div className="grid md:grid-cols-2 gap-4">
-          {activeGames.map((account) => (
+          {activeGames.map((account: { publicKey: PublicKey }) => (
             <HangmanCard
               key={account.publicKey.toString()}
               account={account.publicKey}
@@ -78,7 +90,11 @@ function NoActiveGamesMessage() {
   );
 }
 
-function HangmanCard({ account }: { account: PublicKey }) {
+interface HangmanCardProps {
+  account: PublicKey;
+}
+
+function HangmanCard({ account }: HangmanCardProps) {
   const { accountQuery } = useHangmanProgramAccount({ account });
 
   const gameData = useMemo(
@@ -91,8 +107,8 @@ function HangmanCard({ account }: { account: PublicKey }) {
   }
 
   return (
-    <div className="card card-bordered border-base-300 border-4 text-neutral-content ">
-      <div className=" card-body items-center text-center">
+    <div className="card card-bordered border-base-300 border-4 text-neutral-content">
+      <div className="card-body items-center text-center">
         <div className="space-y-6">
           <GameTitle gameData={gameData} />
           <GameControls gameData={gameData} account={account} />
@@ -103,19 +119,26 @@ function HangmanCard({ account }: { account: PublicKey }) {
   );
 }
 
-function extractGameData(data) {
+function extractGameData(data?: Hangman) {
   return {
     word: data?.word ?? '',
     maxWrongGuesses: data?.maxWrongGuesses ?? 0,
     wrongGuesses: data?.wrongGuesses ?? 0,
-    guessedLetters: data?.guessedLetters ?? [],
-    wrong_guessed_letters: data?.wrongGuessedLetters ?? [],
+    guessedLetters: data?.guessedLetters ?? new Uint8Array(),
+    wrong_guessed_letters: data?.wrongGuessedLetters ?? new Uint8Array(),
     is_game_over: data?.isGameOver ?? false,
     is_game_won: data?.isGameWon ?? false,
   };
 }
 
-function GameTitle({ gameData }) {
+interface GameTitleProps {
+  gameData: {
+    word: string;
+    guessedLetters: Uint8Array;
+  };
+}
+
+function GameTitle({ gameData }: GameTitleProps) {
   return (
     <h2 className="card-title justify-center cursor-pointer text-4xl">
       {gameData.word
@@ -128,7 +151,16 @@ function GameTitle({ gameData }) {
   );
 }
 
-function GameControls({ gameData, account }) {
+interface GameControlsProps {
+  gameData: {
+    is_game_over: boolean;
+    maxWrongGuesses: number;
+    wrongGuesses: number;
+  };
+  account: PublicKey;
+}
+
+function GameControls({ gameData, account }: GameControlsProps) {
   if (gameData.is_game_over) return null;
 
   return (
@@ -148,7 +180,11 @@ function GameControls({ gameData, account }) {
   );
 }
 
-function AccountLink({ account }) {
+interface AccountLinkProps {
+  account: PublicKey;
+}
+
+function AccountLink({ account }: AccountLinkProps) {
   return (
     <div className="text-center space-y-4">
       <p>
