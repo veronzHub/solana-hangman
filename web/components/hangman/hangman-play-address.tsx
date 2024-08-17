@@ -137,12 +137,17 @@ function GameCard({
 function GameOverMessage({ gameData }: { gameData: any }) {
   return (
     <div>
-      <p>GAME OVER</p>
-      <p>
-        {gameData.is_game_won
-          ? 'You won!'
-          : `You lost! The word was "${gameData.word}"`}
-      </p>
+      <p className="mb-4 mt-10">GAME OVER</p>
+      {gameData.is_game_won ? (
+        <h2 className="animate-jump-in text-6xl">You won!</h2>
+      ) : (
+        <>
+          <h2 className="animate-jump-in text-6xl">You lost!</h2>
+          <p className="text-xl mt-4">
+            The word was &quot;{gameData.word}&quot;
+          </p>
+        </>
+      )}
     </div>
   );
 }

@@ -1,30 +1,30 @@
 use anchor_lang::prelude::*;
 use std::str;
 
-declare_id!("EGYo4TaUmnsxosJaKxVGSUzXNmw6XSsZxMzpG4bdpDYR");
+declare_id!("4u6yGzkFDTA62nicP8EGe8B8hn1SGuAwQ3o32iEcE9D6");
 
 #[program]
 pub mod hangman_game {
     use super::*;
 
     pub fn start_game(ctx: Context<StartGame>, word: String, max_wrong_guesses: u8) -> Result<()> {
-      let hangman = &mut ctx.accounts.hangman;
-      hangman.is_initialized = true;
-      hangman.word = word.to_lowercase();
-      hangman.word_length = hangman.word.len() as u8;
-      hangman.max_wrong_guesses = max_wrong_guesses;
-      hangman.guessed_letters = vec![0; hangman.word_length as usize];
-      hangman.wrong_guessed_letters = vec![];
-      hangman.is_game_over = false;
-      hangman.is_game_won = false;
-      Ok(())
+        let hangman = &mut ctx.accounts.hangman;
+        hangman.is_initialized = true;
+        hangman.word = word.to_lowercase();
+        hangman.word_length = hangman.word.len() as u8;
+        hangman.max_wrong_guesses = max_wrong_guesses;
+        hangman.guessed_letters = vec![0; hangman.word_length as usize];
+        hangman.wrong_guessed_letters = vec![];
+        hangman.is_game_over = false;
+        hangman.is_game_won = false;
+        Ok(())
     }
 
     pub fn make_guess(ctx: Context<MakeGuess>, letter: u8) -> Result<()> {
         let hangman = &mut ctx.accounts.hangman;
 
         if hangman.is_game_over {
-          return Err(ErrorCode::GameOver.into());
+            return Err(ErrorCode::GameOver.into());
         }
 
         // Ensure the guess is a lowercase alphabet character
@@ -46,30 +46,29 @@ pub mod hangman_game {
 
         // Second pass: Update the guessed letters
         if correct_guess {
-          for (i, &c) in word_bytes.iter().enumerate() {
-              if c == letter {
-                  hangman.guessed_letters[i] = letter;
-              }
-          }
+            for (i, &c) in word_bytes.iter().enumerate() {
+                if c == letter {
+                    hangman.guessed_letters[i] = letter;
+                }
+            }
         } else {
             hangman.wrong_guessed_letters.push(letter);
             hangman.wrong_guesses += 1;
         }
 
         if hangman.wrong_guesses >= hangman.max_wrong_guesses {
-          hangman.is_game_over = true;
-          msg!("Game Over! Too many wrong guesses.");
+            hangman.is_game_over = true;
+            msg!("Game Over! Too many wrong guesses.");
         }
 
         if hangman.guessed_letters.iter().all(|&c| c != 0) {
-          hangman.is_game_over = true;
-          hangman.is_game_won = true;
+            hangman.is_game_over = true;
+            hangman.is_game_won = true;
             msg!("Congratulations! You guessed the word.");
         }
 
         Ok(())
     }
-
 }
 
 #[derive(Accounts)]
@@ -86,7 +85,6 @@ pub struct MakeGuess<'info> {
     #[account(mut)]
     pub hangman: Account<'info, Hangman>,
 }
-
 
 #[account]
 pub struct Hangman {
