@@ -9,8 +9,8 @@ export default function Home() {
           Decentralized Hangman{' '}
         </h1>
         <p className="text-2xl md:text-3xl mb-10 leading-8 md:leading-10">
-          Experience the classic Hangman game enhanced by the capabilities of
-          Solana&apos;s blockchain platform.
+          Experience the classic Hangman game on Solana&apos;s blockchain
+          platform.
         </p>
         <p className="mb-10">
           <Image
