@@ -8,6 +8,9 @@ export const metadata = {
   title: 'Solana Hangman Game',
   description:
     "Experience the classic Hangman game enhanced by the capabilities of Solana's blockchain platform.",
+  openGraph: {
+    images: '/og-1200x630.png',
+  },
 };
 
 const links: { label: string; path: string }[] = [
