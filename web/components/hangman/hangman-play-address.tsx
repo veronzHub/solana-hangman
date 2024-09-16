@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Confetti from 'react-confetti';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { LoadingSpinner, WalletPrompt } from './hangman-ui';
+import Link from 'next/link';
 
 export default function PlayAddressPage() {
   const { publicKey } = useWallet();
@@ -139,12 +140,20 @@ function GameOverMessage({ gameData }: { gameData: any }) {
     <div>
       <p className="mb-4 mt-10">GAME OVER</p>
       {gameData.is_game_won ? (
-        <h2 className="animate-jump-in text-6xl">You won!</h2>
+        <>
+          <h2 className="animate-jump-in text-6xl">You won!</h2>
+          <p className="m-10 text-xl underline text-secondary">
+            <Link href="/hangman/play">Play another game</Link>
+          </p>
+        </>
       ) : (
         <>
           <h2 className="animate-jump-in text-6xl">You lost!</h2>
           <p className="text-xl mt-4">
             The word was &quot;{gameData.word}&quot;
+          </p>
+          <p className="m-10 text-xl underline text-secondary">
+            <Link href="/hangman/play">Play another game</Link>
           </p>
         </>
       )}
