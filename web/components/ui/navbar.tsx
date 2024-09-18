@@ -24,7 +24,13 @@ export default function Navbar({
   return (
     <nav className="flex flex-col md:flex-row space-y-2 md:space-y-0  justify-between p-6">
       <Link href="/" className="mr-20" onClick={handleLinkClick}>
-        <Image src="/hangman-logo.png" alt="Logo" width={260} height={62} />
+        <Image
+          src="/hangman-logo.png"
+          alt="Logo"
+          width={260}
+          height={62}
+          priority
+        />
       </Link>
       <div className="relative">
         <div className="lg:hidden cursor-pointer z-50 fixed top-6 right-6">
