@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="py-[64px] flex flex-col md:flex-row justify-center items-center md:space-x-20 p-10">
+    <main className="py-[64px] flex flex-col md:flex-row justify-center items-center md:space-x-20 ">
       <div className="w-full md:w-1/2 text-center mb-20 md:mb-0">
         <h1 className="text-4xl sm:text-6xl text-secondary mb-10">
           Decentralized Hangman{' '}
@@ -16,9 +16,10 @@ export default function Home() {
           <Image
             src="/logo.png"
             width={200}
-            height={200}
+            height={30}
             alt="Solana"
             className="m-auto"
+            priority
           />
         </p>
         <p>
@@ -37,6 +38,7 @@ export default function Home() {
           width={700}
           height={700}
           className="w-full"
+          priority
         />
       </div>
     </main>
